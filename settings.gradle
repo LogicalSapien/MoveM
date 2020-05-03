@@ -1,0 +1,3 @@
+rootProject.name='MoveM'
+include ':mobile'
+include ':wear'
