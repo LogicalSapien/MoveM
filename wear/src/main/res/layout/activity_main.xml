@@ -50,11 +50,4 @@
 
     </FrameLayout>
 
-    <Button
-        android:id="@+id/talkClick"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="160dp"
-        android:text="Button"
-        android:textAlignment="center" />
 </androidx.wear.widget.BoxInsetLayout>

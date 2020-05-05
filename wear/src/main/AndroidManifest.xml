@@ -14,27 +14,27 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault"
         android:usesCleartextTraffic="true">
-<!--        <service-->
-<!--            android:name=".DataLayerListenerService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />-->
-
-<!--                <data-->
-<!--                    android:host="*"-->
-<!--                    android:path="/start-activity"-->
-<!--                    android:scheme="wear" />-->
-<!--            </intent-filter>-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />-->
-
-<!--                //Specify your path, and a host for the filter. Here, I’m using a wildcard host//-->
-
-<!--                <data android:scheme="wear" android:host="*" android:pathPrefix="/start-activity" />-->
-<!--            </intent-filter>-->
-<!--        </service>-->
-
+        <service
+            android:name=".ForegroundService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <!-- <service -->
+        <!-- android:name=".DataLayerListenerService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.google.android.gms.wearable.DATA_CHANGED" /> -->
+        <!-- <data -->
+        <!-- android:host="*" -->
+        <!-- android:path="/start-activity" -->
+        <!-- android:scheme="wear" /> -->
+        <!-- </intent-filter> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" /> -->
+        <!-- //Specify your path, and a host for the filter. Here, I’m using a wildcard host// -->
+        <!-- <data android:scheme="wear" android:host="*" android:pathPrefix="/start-activity" /> -->
+        <!-- </intent-filter> -->
+        <!-- </service> -->
         <uses-library
             android:name="com.google.android.wearable"
             android:required="true" />
@@ -55,14 +55,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service android:name=".MessageService">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
-                <data android:scheme="wear" android:host="*" android:pathPrefix="/my_path" />
 
+                <data
+                    android:host="*"
+                    android:pathPrefix="/my_path"
+                    android:scheme="wear" />
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>

@@ -19,14 +19,21 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
+import com.logicalsapien.movem.util.MapUtil;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
 
     TextView sensorTextview;
 
+    EditText millisToWaitBeforeSending;
+    EditText millisToWaitBeforeReset;
+    EditText dataPacketSize;
+    EditText accelerometerThreshold;
+
     LongOperation lo;
 
     @Override
@@ -49,8 +61,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         sensorTextview = findViewById(R.id.sensorTextview);
+        sensorTextview.setText("No Data Yet..");
 
-        sensorTextview.setText("");
+        millisToWaitBeforeSending   = (EditText)findViewById(R.id.millisToWaitBeforeSending);
+        millisToWaitBeforeReset   = (EditText)findViewById(R.id.millisToWaitBeforeReset);
+        dataPacketSize   = (EditText)findViewById(R.id.dataPacketSize);
+        accelerometerThreshold   = (EditText)findViewById(R.id.accelerometerThreshold);
+
+        millisToWaitBeforeSending.setText(1000+"");
+        millisToWaitBeforeReset.setText(15000+"");
+        dataPacketSize.setText(10+"");
+        accelerometerThreshold.setText(2+"");
 
         myHandler = new Handler(new Handler.Callback() {
             @Override
@@ -88,7 +109,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonPress(View view) {
-        this.talkClick(view);
+        lo = new LongOperation(this);
+        lo.execute("There is a movement..!!!!");
+        Map<String, String> prefMap = new HashMap<>();
+        prefMap.put("millisToWaitBeforeSending", millisToWaitBeforeSending.getText().toString());
+        prefMap.put("millisToWaitBeforeReset", millisToWaitBeforeReset.getText().toString());
+        prefMap.put("dataPacketSize", dataPacketSize.getText().toString());
+        prefMap.put("accelerometerThreshold", accelerometerThreshold.getText().toString());
+
+        Log.i("SendingMessage", MapUtil.mapToString(prefMap));
+
+        new NewThread("/my_path", MapUtil.mapToString(prefMap)).start();
     }
 
     public void messageText(String newinfo) {
@@ -106,19 +137,23 @@ public class MainActivity extends AppCompatActivity {
 //            String message = "I just received a message from the wearable " + receivedMessageNumber++;;
 //            textview.setText(message);
             String message = intent.getStringExtra("message");
-            sensorTextview.setText(message);
-            lo = new LongOperation(context);
-            lo.execute("There is a movement..!!!!");
-            Log.i("Received", message);
+            Map<String, String> data = MapUtil.stringToMap(message);
+            if (message.contains("heartBeat")) {
+                sensorTextview.setText("Last Heart Beat " + DateFormat.getDateTimeInstance().format(new Date()) + "\n");
+            } else {
+                StringBuilder textViewM = new StringBuilder();
+                textViewM.append("Data Received at " + DateFormat.getDateTimeInstance().format(new Date()) + "\n");
+                for (Map.Entry<String, String> entry : data.entrySet()) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+                    textViewM.append(key + " - " + value + "\n");
+                }
+                sensorTextview.setText(textViewM.toString());
+                lo = new LongOperation(context);
+                lo.execute("There is a movement..!!!!");
+                Log.i("Received", message);
+            }
         }
-    }
-
-
-    public void talkClick(View v) {
-        String message = "Sending message.... ";
-//        textview.setText(message);
-        Log.i("talkClick", message);
-        new NewThread("/my_path", message).start();
     }
 
 
@@ -239,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_launcher_background)
                     .setContentTitle(String.format("%s (id %d)", title, notificationId))
-                    .setContentText("Much longer text that cannot fit one line...")
+                    .setContentText("A considerable movement has been recorded by the watch")
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(false)
                     // Add the action button
