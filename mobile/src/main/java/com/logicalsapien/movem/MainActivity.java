@@ -3,8 +3,10 @@ package com.logicalsapien.movem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,6 +21,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -55,10 +58,17 @@ public class MainActivity extends AppCompatActivity {
 
     LongOperation lo;
 
+    Button serviceButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        serviceButton = (Button) findViewById(R.id.serviceButton);
+        if (isMyServiceRunning(ForegroundService.class)) {
+            serviceButton.setText("Stop");
+        }
 
         sensorTextview = findViewById(R.id.sensorTextview);
         sensorTextview.setText("No Data Yet..");
@@ -156,6 +166,59 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void startStopService(View view)  {
+        if (serviceButton.getText().toString().equalsIgnoreCase("Start Service")) {
+            serviceButton.setText("Stop Service");
+//            maxReadingTextView.setText(maxReading + "");
+            startService();
+        } else {
+            serviceButton.setText("Start Service");
+            stopService();
+        }
+    }
+
+    public void startService() {
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        serviceIntent.putExtra("inputExtra", "MoveM Service");
+        ContextCompat.startForegroundService(this, serviceIntent);
+
+        // start the heart beat timer
+       /* final Handler handler = new Handler();
+
+        final MainActivity thisObj = this;
+
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+//                Toast.makeText(thisObj,  "Runnuing", Toast.LENGTH_SHORT).show();
+
+                String datapath = "/my_path";
+                Map<String, String> hbD = new HashMap<>();
+                hbD.put("heartBeat", System.currentTimeMillis() + "");
+                new SendMessage(getApplicationContext(), datapath, MapUtil.mapToString(hbD)).start();
+
+                handler.postDelayed(this, 30000);
+            }
+        };
+
+        handler.post(run);*/
+    }
+
+    public void stopService() {
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        stopService(serviceIntent);
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service
+                : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void sendmessage(String messageText) {
         Bundle bundle = new Bundle();

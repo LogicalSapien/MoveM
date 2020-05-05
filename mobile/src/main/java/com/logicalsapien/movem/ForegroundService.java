@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 public class ForegroundService extends Service {
-    public static final String CHANNEL_ID = "ForegroundServiceChannel";
+    public static final String CHANNEL_ID = "MoveMChannel";
     @Override
     public void onCreate() {
         super.onCreate();
@@ -25,7 +25,7 @@ public class ForegroundService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("MoveM Service")
+                .setContentTitle("MoveM Service Running")
                 .setContentText(input)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(pendingIntent)
@@ -35,20 +35,23 @@ public class ForegroundService extends Service {
         //stopSelf();
         return START_NOT_STICKY;
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
+
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Foreground Service Channel",
+                    "MoveM Channel",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
