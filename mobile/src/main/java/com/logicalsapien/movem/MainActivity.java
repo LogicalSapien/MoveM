@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.app.ActivityManager;
+import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -162,6 +163,10 @@ public class MainActivity extends AppCompatActivity {
                 lo = new LongOperation(context);
                 lo.execute("There is a movement..!!!!");
                 Log.i("Received", message);
+
+                Intent intentToOpen = getPackageManager().getLaunchIntentForPackage(getPackageName());
+                intentToOpen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intentToOpen);
             }
         }
     }
@@ -278,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private static final String CHANNEL_ID = "CHANNEL_ID";
+    private static final String CHANNEL_ID = "MoveM Movement";
     private static final String TAG = "main";
 
     private class LongOperation extends AsyncTask<String, String, String> {

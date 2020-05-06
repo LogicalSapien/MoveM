@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 public class ForegroundService extends Service {
-    public static final String CHANNEL_ID = "MoveMChannel";
+    public static final String CHANNEL_ID = "MoveM Service";
     @Override
     public void onCreate() {
         super.onCreate();
@@ -51,7 +51,7 @@ public class ForegroundService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
-                    "MoveM Channel",
+                    "MoveM Service Channel",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
