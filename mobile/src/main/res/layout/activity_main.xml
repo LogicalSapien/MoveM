@@ -41,8 +41,8 @@
         <TextView
             android:id="@+id/sensorTextview"
             android:layout_width="match_parent"
-            android:layout_height="414dp"
-            android:layout_marginTop="370dp"
+            android:layout_height="326dp"
+            android:layout_marginTop="450dp"
             android:lines="4"
             android:maxLines="6"
             android:text="TextView"
@@ -172,5 +172,13 @@
             android:layout_marginTop="270dp"
             android:onClick="startStopService"
             android:text="Start Service" />
+
+        <TextView
+            android:id="@+id/heartBeatView"
+            android:layout_width="match_parent"
+            android:layout_height="71dp"
+            android:layout_marginTop="350dp"
+            android:text="TextView"
+            android:textAlignment="center" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

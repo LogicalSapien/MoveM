@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     int sentMessageNumber = 1;
 
     TextView sensorTextview;
+    TextView heartBeatView;
 
     EditText millisToWaitBeforeSending;
     EditText millisToWaitBeforeReset;
@@ -73,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
 
         sensorTextview = findViewById(R.id.sensorTextview);
         sensorTextview.setText("No Data Yet..");
+
+        heartBeatView = findViewById(R.id.heartBeatView);
+        heartBeatView.setText("No Data Yet..");
+
 
         millisToWaitBeforeSending   = (EditText)findViewById(R.id.millisToWaitBeforeSending);
         millisToWaitBeforeReset   = (EditText)findViewById(R.id.millisToWaitBeforeReset);
@@ -150,7 +155,8 @@ public class MainActivity extends AppCompatActivity {
             String message = intent.getStringExtra("message");
             Map<String, String> data = MapUtil.stringToMap(message);
             if (message.contains("heartBeat")) {
-                sensorTextview.setText("Last Heart Beat " + DateFormat.getDateTimeInstance().format(new Date()) + "\n");
+                heartBeatView.setText("Last Heart Beat : " + DateFormat.getDateTimeInstance().format(new Date()) + "\n"
+                                        + "Battery Percentage : " + data.get("batteryPercentage") + "\n");
             } else {
                 StringBuilder textViewM = new StringBuilder();
                 textViewM.append("Data Received at " + DateFormat.getDateTimeInstance().format(new Date()) + "\n");
@@ -165,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("Received", message);
 
                 Intent intentToOpen = getPackageManager().getLaunchIntentForPackage(getPackageName());
-                intentToOpen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intentToOpen.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 startActivity(intentToOpen);
             }
         }

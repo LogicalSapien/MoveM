@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -132,12 +133,22 @@ public class MainActivity extends WearableActivity {
             public void run() {
 //                Toast.makeText(thisObj,  "Runnuing", Toast.LENGTH_SHORT).show();
 
+                // calculate battery percentage
+                Intent batteryStatus   = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+                int level = batteryStatus .getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                int scale = batteryStatus .getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+                float batteryPercentage = ((float)level / (float)scale) * 100.0f;
+
                 String datapath = "/my_path";
                 Map<String, String> hbD = new HashMap<>();
                 hbD.put("heartBeat", System.currentTimeMillis() + "");
+                hbD.put("batteryPercentage", batteryPercentage + "");
+
+
                 new SendMessage(getApplicationContext(), datapath, MapUtil.mapToString(hbD)).start();
 
-                handler.postDelayed(this, 30000);
+                handler.postDelayed(this, 150000);
             }
         };
 
